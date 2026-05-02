@@ -5,7 +5,7 @@ import TaskCard from "./TaskCard";
 import { MoreHorizontal, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 
-const KanbanColumn = ({ column, tasks, onTaskClick, ...props }: { column: any, tasks: any, onTaskClick: any, [key: string]: any }) => {
+const KanbanColumn = ({ column, tasks, onTaskClick, onAddTask, ...props }: { column: any, tasks: any, onTaskClick: any, onAddTask: () => void, [key: string]: any }) => {
   const { setNodeRef } = useSortable({
     id: column.id,
     data: {
@@ -28,7 +28,7 @@ const KanbanColumn = ({ column, tasks, onTaskClick, ...props }: { column: any, t
         </Button>
       </div>
 
-      <div ref={setNodeRef} className="flex-1 flex flex-col gap-5 min-h-[150px] overflow-y-auto pr-1 scrollbar-hide">
+      <div ref={setNodeRef} className="flex-1 flex flex-col gap-4 min-h-[150px] overflow-y-auto pr-1 pb-2 scrollbar-hide">
         <SortableContext items={tasks.map((t: any) => t.id)} strategy={verticalListSortingStrategy}>
           {tasks.map((task: any) => (
             <TaskCard key={task.id} task={task} onClick={() => onTaskClick(task)} />
@@ -37,8 +37,9 @@ const KanbanColumn = ({ column, tasks, onTaskClick, ...props }: { column: any, t
       </div>
 
       <Button 
+        onClick={onAddTask}
         variant="ghost" 
-        className="mt-8 w-full justify-center text-slate-400 hover:text-emerald-600 hover:bg-white rounded-[1.5rem] h-14 font-black text-sm transition-all shadow-sm hover:shadow-xl border border-transparent hover:border-emerald-50 group"
+        className="mt-4 shrink-0 w-full justify-center text-slate-400 hover:text-emerald-600 hover:bg-white rounded-[1.5rem] h-14 font-black text-sm transition-all shadow-sm hover:shadow-xl border border-transparent hover:border-emerald-50 group"
       >
         <Plus className="w-5 h-5 mr-3 group-hover:rotate-90 transition-transform duration-300" />
         Add Task

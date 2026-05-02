@@ -61,13 +61,14 @@ const TaskDialog = ({
   task, 
   onTaskCreated, 
   onTaskUpdated,
-  onTaskDeleted
+  onTaskDeleted,
+  defaultStatus = "Todo"
 }) => {
   const { user: currentUser } = useAuth();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    status: "Todo",
+    status: defaultStatus,
     priority: "Medium",
     assignedToId: "",
     dueDate: null,
@@ -91,13 +92,13 @@ const TaskDialog = ({
       setFormData({
         title: "",
         description: "",
-        status: "Todo",
+        status: defaultStatus,
         priority: "Medium",
         assignedToId: "",
         dueDate: null,
       });
     }
-  }, [task, isOpen]);
+  }, [task, isOpen, defaultStatus]);
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -137,8 +138,8 @@ const TaskDialog = ({
 
   const isReadOnly = task && !canEdit();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: any) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (isReadOnly) return;
     if (!formData.title.trim()) {
       toast.error("Title is required");
@@ -536,8 +537,7 @@ const TaskDialog = ({
             </Button>
             {!isReadOnly && (
               <Button 
-                type="submit" 
-                form="task-form" 
+                onClick={handleSubmit} 
                 className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-widest px-8 h-12 rounded-xl shadow-lg shadow-slate-200 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] hover:-translate-y-0.5"
                 disabled={loading}
               >

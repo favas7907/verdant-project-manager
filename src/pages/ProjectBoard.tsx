@@ -45,6 +45,7 @@ const ProjectBoard = () => {
   const [activeTask, setActiveTask] = useState<any>(null);
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [dialogDefaultStatus, setDialogDefaultStatus] = useState("Todo");
   const [projectMembers, setProjectMembers] = useState<any[]>([]);
   const [isMemberDialogOpen, setIsMemberDialogOpen] = useState(false);
 
@@ -80,6 +81,7 @@ const ProjectBoard = () => {
             <Button 
               onClick={() => {
                 setSelectedTask(null);
+                setDialogDefaultStatus("Todo");
                 setIsTaskDialogOpen(true);
               }}
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 h-11 rounded-xl shadow-lg shadow-emerald-100 transition-all hover:scale-[1.02] active:scale-[0.98]"
@@ -356,6 +358,11 @@ const ProjectBoard = () => {
                   setSelectedTask(task);
                   setIsTaskDialogOpen(true);
                 }}
+                onAddTask={() => {
+                  setSelectedTask(null);
+                  setDialogDefaultStatus(col.id);
+                  setIsTaskDialogOpen(true);
+                }}
               />
             ))}
           </div>
@@ -384,6 +391,7 @@ const ProjectBoard = () => {
         onClose={() => setIsTaskDialogOpen(false)} 
         project={project}
         task={selectedTask}
+        defaultStatus={dialogDefaultStatus}
         onTaskCreated={(newTask) => setTasks([...tasks, newTask])}
         onTaskUpdated={(updatedTask) => setTasks(tasks.map(t => t.id === updatedTask.id ? updatedTask : t))}
         onTaskDeleted={(taskId) => setTasks(tasks.filter(t => t.id !== taskId))}

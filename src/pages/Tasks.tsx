@@ -29,16 +29,6 @@ const Tasks = () => {
           <Filter className="w-4 h-4 mr-2 text-slate-400" />
           Filter
         </Button>
-        <Button 
-          onClick={() => {
-            setSelectedTask(null);
-            setIsTaskDialogOpen(true);
-          }}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 h-11 rounded-xl shadow-lg shadow-emerald-100 transition-all hover:scale-[1.02] active:scale-[0.98]"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Task
-        </Button>
       </div>
     );
 

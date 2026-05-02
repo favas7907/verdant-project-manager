@@ -39,7 +39,7 @@ import {
   DropdownMenuSeparator
 } from "../components/ui/dropdown-menu";
 import { cn } from "../lib/utils";
-import { deleteDoc, doc } from "firebase/firestore";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { Skeleton } from "../components/ui/skeleton";
 
 import { useAuth } from "../context/AuthContext";
@@ -54,6 +54,8 @@ const Projects = () => {
   const [search, setSearch] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newProject, setNewProject] = useState({ name: "", description: "" });
+  const [editProject, setEditProject] = useState({ id: "", name: "", description: "" });
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const canCreateProject = !!user?.uid;
 
@@ -134,6 +136,26 @@ const Projects = () => {
     } catch (err) {
       console.error("Error creating project:", err);
       toast.error("Failed to create project");
+    }
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!user?.uid || !editProject.id) return;
+    try {
+      const projectRef = doc(db, "projects", editProject.id);
+      await updateDoc(projectRef, {
+        name: editProject.name,
+        description: editProject.description,
+        updatedAt: serverTimestamp()
+      });
+      toast.success("Project updated successfully");
+      setIsEditOpen(false);
+      setEditProject({ id: "", name: "", description: "" });
+      fetchProjects();
+    } catch (err) {
+      console.error("Error updating project:", err);
+      toast.error("Failed to update project");
     }
   };
 
@@ -256,6 +278,44 @@ const Projects = () => {
           </Dialog>
         )}
 
+      {canCreateProject && (
+        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+          <DialogContent className="sm:max-w-[450px] border-none shadow-2xl rounded-3xl p-0 overflow-hidden">
+              <div className="bg-emerald-600 p-8 text-white">
+                <DialogTitle className="text-2xl font-black">Edit Project</DialogTitle>
+                <p className="text-emerald-100 text-sm mt-1 font-medium opacity-80">Update your workspace details.</p>
+              </div>
+              <form onSubmit={handleEditSubmit} className="p-8 space-y-6 bg-white">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-name" className="text-slate-700 font-bold text-sm uppercase tracking-wider">Project Name</Label>
+                  <Input 
+                    id="edit-name" 
+                    value={editProject.name} 
+                    onChange={(e) => setEditProject({...editProject, name: e.target.value})}
+                    required
+                    placeholder="e.g. Website Redesign"
+                    className="h-12 border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 rounded-xl font-medium transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-description" className="text-slate-700 font-bold text-sm uppercase tracking-wider">Description</Label>
+                  <Textarea 
+                    id="edit-description" 
+                    value={editProject.description} 
+                    onChange={(e) => setEditProject({...editProject, description: e.target.value})}
+                    placeholder="What is this project about?"
+                    className="min-h-[120px] resize-none border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 rounded-xl font-medium transition-all"
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <Button type="button" variant="ghost" onClick={() => setIsEditOpen(false)} className="flex-1 h-12 rounded-xl font-bold text-slate-500 hover:bg-slate-50">Cancel</Button>
+                  <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white h-12 rounded-xl font-bold shadow-lg shadow-emerald-100">Save Changes</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
+
       {/* Filters & Search */}
       <div className="flex flex-col sm:flex-row gap-4 bg-white/50 backdrop-blur-md p-2 rounded-3xl border border-slate-200/50 shadow-sm">
         <div className="relative flex-1">
@@ -326,7 +386,13 @@ const Projects = () => {
                           <MoreVertical className="w-4 h-4" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48 rounded-xl border-none shadow-2xl">
-                          <DropdownMenuItem className="font-bold text-xs uppercase tracking-widest text-slate-600 focus:text-emerald-600 focus:bg-emerald-50 cursor-pointer">
+                          <DropdownMenuItem 
+                            className="font-bold text-xs uppercase tracking-widest text-slate-600 focus:text-emerald-600 focus:bg-emerald-50 cursor-pointer"
+                            onClick={() => {
+                              setEditProject({ id: project.id, name: project.name, description: project.description || "" });
+                              setIsEditOpen(true);
+                            }}
+                          >
                             Edit Project
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />

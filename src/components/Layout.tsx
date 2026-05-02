@@ -182,13 +182,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     <DropdownMenuTrigger render={
                       <button className="flex items-center gap-3 pl-2 group cursor-pointer outline-none border-none bg-transparent text-left">
                         <div className="text-right hidden sm:block">
-                          <p className="text-sm font-black text-slate-900 leading-none group-hover:text-emerald-600 transition-colors">{user?.name}</p>
+                          <p className="text-sm font-black text-slate-900 leading-none group-hover:text-emerald-600 transition-colors">{user?.name || (user?.email ? user.email.split('@')[0] : "User")}</p>
                           <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-[0.15em] font-black">Workspace Member</p>
                         </div>
                         <Avatar className="w-11 h-11 border-2 border-white shadow-xl ring-1 ring-slate-100 group-hover:ring-emerald-200 transition-all duration-300">
                           <AvatarImage src={user?.avatar} />
-                          <AvatarFallback className="bg-emerald-50 text-emerald-600 font-black text-lg">
-                            {user?.name?.charAt(0)}
+                          <AvatarFallback className="bg-emerald-50 text-emerald-600 font-black text-lg uppercase">
+                            {(user?.name || user?.email || "U").charAt(0)}
                           </AvatarFallback>
                         </Avatar>
                       </button>

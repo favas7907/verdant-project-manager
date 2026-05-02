@@ -56,7 +56,8 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    setTitle(`${getGreeting()}, ${user?.name?.split(' ')[0]}`);
+    const displayName = user?.name ? user.name.split(' ')[0] : (user?.email ? user.email.split('@')[0] : "User");
+    setTitle(`${getGreeting()}, ${displayName}`);
     setActions(
       <div className="flex gap-3">
         <Button variant="outline" className="border-slate-200 bg-white h-11 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
@@ -397,7 +398,7 @@ const Dashboard = () => {
             <CardDescription className="text-slate-500 font-medium">Current distribution of all tasks</CardDescription>
           </CardHeader>
           <CardContent className="p-6 h-[380px] flex flex-col items-center justify-center">
-            <div className="relative w-full h-full flex items-center justify-center">
+            <div className="relative flex-1 min-h-0 w-full flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
