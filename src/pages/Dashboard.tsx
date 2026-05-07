@@ -344,9 +344,10 @@ const Dashboard = () => {
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="p-6 h-[380px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={stats?.productivityData || []}>
+          <CardContent className="p-6 h-[380px] flex flex-col">
+            <div className="flex-1 min-h-0 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={stats?.productivityData || []}>
                 <defs>
                   <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.15}/>
@@ -388,6 +389,7 @@ const Dashboard = () => {
                 />
               </AreaChart>
             </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
 

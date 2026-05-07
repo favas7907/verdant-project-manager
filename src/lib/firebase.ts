@@ -1,31 +1,27 @@
-import { initializeApp, getApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-
-function requireEnv(name: string): string {
-  const value = import.meta.env[name];
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
-  }
-  return value;
-}
-
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+// Use environment variables directly for Firebase configuration
 const firebaseConfig = {
-  apiKey: requireEnv("VITE_FIREBASE_API_KEY"),
-  authDomain: requireEnv("VITE_FIREBASE_AUTH_DOMAIN"),
-  projectId: requireEnv("VITE_FIREBASE_PROJECT_ID"),
-  storageBucket: requireEnv("VITE_FIREBASE_STORAGE_BUCKET"),
-  messagingSenderId: requireEnv("VITE_FIREBASE_MESSAGING_SENDER_ID"),
-  appId: requireEnv("VITE_FIREBASE_APP_ID"),
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const databaseId = import.meta.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID || "(default)";
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+if (!firebaseConfig.apiKey) {
+  throw new Error("Firebase API Key is missing. Please add VITE_FIREBASE_API_KEY to your environment variables.");
+}
+
+const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-export const db = databaseId === "(default)" ? getFirestore(app) : getFirestore(app, databaseId);
+export const db = getFirestore(app, databaseId);
 export const storage = getStorage(app);
 
 export default app;
